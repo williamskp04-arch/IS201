@@ -1,0 +1,205 @@
+
+<style>
+  :root {
+    --bg: #f7f9fb;
+    --card-bg: #ffffff;
+    --border: #d9d9d9;
+    --text-main: #222;
+    --text-secondary: #666;
+    --accent: #2a7ae2;
+  }
+
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--bg);
+    margin: 0;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* Card */
+  .park-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    width: 100%;
+    max-width: 600px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
+
+  .park-name {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0.25rem 0 0;
+    color: var(--text-main);
+  }
+
+  .park-location {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  .fact {
+    font-size: 15px;
+    color: var(--text-secondary);
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    line-height: 1.5;
+  }
+
+  .fact:last-child {
+    border-bottom: none;
+  }
+
+  .badge {
+    display: inline-block;
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 8px;
+    background: #e8f1ff;
+    color: #2a7ae2;
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+
+  /* Button */
+  .roll-btn {
+    width: 100%;
+    max-width: 600px;
+    padding: 14px;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: #f0f4f8;
+    color: var(--text-main);
+    transition: 0.15s;
+    margin-top: 1rem;
+  }
+
+  .roll-btn:hover {
+    background: #e4e9ef;
+  }
+
+  .roll-btn:active {
+    transform: scale(0.98);
+  }
+
+  .counter {
+    font-size: 14px;
+    color: var(--text-secondary);
+    text-align: center;
+    margin-top: 8px;
+  }
+
+  .empty-state {
+    color: var(--text-secondary);
+    font-size: 16px;
+    text-align: center;
+    padding: 2rem 0;
+  }
+</style>
+
+<h2 class="sr-only">Random National Park Generator</h2>
+
+<div id="card" class="park-card">
+  <p class="empty-state">Press Roll to discover a random national park!</p>
+</div>
+
+<button class="roll-btn" onclick="roll()">Roll</button>
+<p class="counter" id="counter"></p>
+
+<script>
+const parks = [
+  { name: "Acadia", location: "Maine", facts: ["First national park east of the Mississippi", "Cadillac Mountain is among the first places in the U.S. to see sunrise", "Over 150 miles of hiking trails"] },
+  { name: "Congaree", location: "South Carolina", facts: ["Largest intact old-growth bottomland hardwood forest in the U.S.", "Trees are among the tallest in the eastern U.S.", "Famous for synchronized firefly displays"] },
+  { name: "Cuyahoga Valley", location: "Ohio", facts: ["The only national park in Ohio", "Home to a scenic railroad you can ride through the park", "Brandywine Falls is a major highlight"] },
+  { name: "Great Smoky Mountains", location: "Tennessee / North Carolina", facts: ["Most visited U.S. national park", "Over 19,000 documented species live here", "Famous for a blue haze caused by plant emissions"] },
+  { name: "Hot Springs", location: "Arkansas", facts: ["Oldest federally protected area, predating the park system", "Built around natural thermal springs", "Includes beautifully preserved historic bathhouses"] },
+  { name: "Mammoth Cave", location: "Kentucky", facts: ["Longest cave system in the world", "Over 400 miles of cave have been explored", "Underground rivers run through it"] },
+  { name: "New River Gorge", location: "West Virginia", facts: ["One of the oldest rivers in the world", "Famous for its massive steel arch bridge", "A top rock climbing destination in the eastern U.S."] },
+  { name: "Shenandoah", location: "Virginia", facts: ["Skyline Drive runs the entire length of the park", "Known for spectacular fall foliage", "Over 500 miles of trails including part of the Appalachian Trail"] },
+  { name: "Biscayne", location: "Florida", facts: ["95% of the park is water", "Protects a stretch of living coral reefs", "Popular for snorkeling and boating"] },
+  { name: "Dry Tortugas", location: "Florida", facts: ["Only accessible by boat or seaplane", "Home to the massive Fort Jefferson", "Offers some of the best snorkeling in the U.S."] },
+  { name: "Everglades", location: "Florida", facts: ["Largest subtropical wilderness in the U.S.", "The only place in the world where alligators and crocodiles coexist", "Critical to Florida's freshwater supply"] },
+  { name: "Virgin Islands", location: "U.S. Virgin Islands", facts: ["Covers about 60% of St. John island", "Known for pristine white sand beaches", "Home to rich coral reef ecosystems"] },
+  { name: "Arches", location: "Utah", facts: ["Contains over 2,000 natural stone arches", "Delicate Arch is one of the most iconic natural landmarks in the U.S.", "Arches formed from erosion of sandstone fins"] },
+  { name: "Bryce Canyon", location: "Utah", facts: ["Famous for 'hoodoos' — tall, thin rock spires", "Has one of the darkest night skies in the U.S.", "Sits at a high elevation in a cold desert"] },
+  { name: "Canyonlands", location: "Utah", facts: ["Divided into three distinct districts", "The Colorado and Green Rivers meet here", "One of the most remote and rugged parks in the U.S."] },
+  { name: "Capitol Reef", location: "Utah", facts: ["Named after dome-shaped white rock formations", "Features historic pioneer fruit orchards still open to visitors", "Far less crowded than Utah's other major parks"] },
+  { name: "Zion", location: "Utah", facts: ["One of the most visited national parks in the U.S.", "The Narrows — a slot canyon hike through the Virgin River — is world-famous", "Features dramatic red and white sandstone cliffs"] },
+  { name: "Grand Canyon", location: "Arizona", facts: ["277 miles long and up to 18 miles wide", "Rock layers reveal nearly 2 billion years of Earth's history", "Carved over millions of years by the Colorado River"] },
+  { name: "Petrified Forest", location: "Arizona", facts: ["Contains fossilized trees over 200 million years old", "Features colorful painted badlands", "Historic Route 66 runs through the park"] },
+  { name: "Saguaro", location: "Arizona", facts: ["Named after the giant saguaro cactus", "Some saguaros live more than 150 years", "An iconic symbol of the American Southwest"] },
+  { name: "White Sands", location: "New Mexico", facts: ["World's largest gypsum sand dune field", "The sand stays cool to the touch even in summer heat", "Looks like snow but is pure white mineral sand"] },
+  { name: "Badlands", location: "South Dakota", facts: ["Dramatic eroded rock formations and rich fossil beds", "One of the world's richest Oligocene fossil deposits", "Experiences extreme temperature swings"] },
+  { name: "Wind Cave", location: "South Dakota", facts: ["One of the longest and most complex caves in the world", "Known for rare 'boxwork' calcite formations", "Bison herds roam the grasslands above the cave"] },
+  { name: "Theodore Roosevelt", location: "North Dakota", facts: ["Named after the president who championed conservation", "Wild horses roam freely through the park", "Helped inspire the creation of the national park system"] },
+  { name: "Rocky Mountain", location: "Colorado", facts: ["Home to peaks over 12,000 feet", "Trail Ridge Road is the highest paved through-road in the U.S.", "Elk are a very common sight in the park"] },
+  { name: "Great Sand Dunes", location: "Colorado", facts: ["Contains the tallest sand dunes in North America", "Visitors can sandboard and sled down the dunes", "Surrounded by mountains and wetlands"] },
+  { name: "Mesa Verde", location: "Colorado", facts: ["Protects ancient cliff dwellings built into canyon walls", "Structures were built by the Ancestral Puebloans", "Contains over 600 ancient structures"] },
+  { name: "Black Canyon of the Gunnison", location: "Colorado", facts: ["Features extremely steep and dramatic canyon walls", "Some areas receive only minutes of direct sunlight per day", "One of the narrowest deep canyons in the U.S."] },
+  { name: "Channel Islands", location: "California", facts: ["Often called the 'Galápagos of North America'", "Home to unique species found nowhere else on Earth", "Only accessible by boat"] },
+  { name: "Death Valley", location: "California / Nevada", facts: ["The hottest place ever recorded on Earth", "Lowest point in North America at 282 ft below sea level", "Can burst into wildflower blooms after rare rains"] },
+  { name: "Joshua Tree", location: "California", facts: ["Where the Mojave and Colorado deserts meet", "Named after the uniquely shaped Joshua trees", "A world-class rock climbing destination"] },
+  { name: "Kings Canyon", location: "California", facts: ["One of the deepest canyons in the United States", "Home to groves of massive giant sequoias", "Far less crowded than nearby Yosemite"] },
+  { name: "Lassen Volcanic", location: "California", facts: ["An active volcanic area with hydrothermal features", "Features boiling mud pots and fumaroles", "Last major eruption occurred in 1917"] },
+  { name: "Pinnacles", location: "California", facts: ["Formed from the eroded remnants of an ancient volcano", "One of the few habitats for the endangered California condor", "Has dramatic talus caves to explore"] },
+  { name: "Redwood", location: "California", facts: ["Home to the tallest trees on Earth", "Coastal fog plays a key role in helping the trees grow", "Some trees stand over 350 feet tall"] },
+  { name: "Sequoia", location: "California", facts: ["Home to the largest trees on Earth by volume", "General Sherman is the world's largest known living tree", "Giant sequoias can live over 3,000 years"] },
+  { name: "Yosemite", location: "California", facts: ["Famous for its granite monoliths like El Capitan", "Has some of the tallest waterfalls in North America", "The valley was carved by ancient glaciers"] },
+  { name: "Crater Lake", location: "Oregon", facts: ["The deepest lake in the United States", "Formed inside a collapsed ancient volcano", "The water is extraordinarily clear and vivid blue"] },
+  { name: "Mount Rainier", location: "Washington", facts: ["An active stratovolcano and the most glaciated peak in the contiguous U.S.", "Covered by more than 25 major glaciers", "Famous for stunning wildflower meadow displays in summer"] },
+  { name: "North Cascades", location: "Washington", facts: ["One of the least visited national parks", "Contains over 300 glaciers", "Has some of the most rugged and remote terrain in the lower 48"] },
+  { name: "Olympic", location: "Washington", facts: ["Has a temperate rainforest, glacier-capped mountains, and wild coastline", "One of the most ecologically diverse parks in the U.S.", "The Hoh Rainforest is one of its most iconic areas"] },
+  { name: "Denali", location: "Alaska", facts: ["Home to the tallest mountain in North America at 20,310 feet", "Wildlife includes bears, moose, wolves, and caribou", "Has only one main road, keeping it wild and remote"] },
+  { name: "Gates of the Arctic", location: "Alaska", facts: ["Has no roads or maintained trails", "Considered true wilderness — no visitor infrastructure", "One of the least visited national parks in the country"] },
+  { name: "Glacier Bay", location: "Alaska", facts: ["Features massive tidewater glaciers calving into the sea", "Best explored by boat", "Humpback whales are frequently spotted in the bay"] },
+  { name: "Katmai", location: "Alaska", facts: ["World-famous for brown bear viewing", "Brooks Falls is iconic for bears catching leaping salmon", "Sits on a volcanically active landscape"] },
+  { name: "Kenai Fjords", location: "Alaska", facts: ["Where massive glaciers meet the ocean", "The Harding Icefield is one of the largest in the U.S.", "Rich marine wildlife including orcas and sea otters"] },
+  { name: "Kobuk Valley", location: "Alaska", facts: ["Contains a surprising Arctic sand dune field", "Located along a major caribou migration route", "One of the most remote and rarely visited parks"] },
+  { name: "Lake Clark", location: "Alaska", facts: ["A dramatic mix of mountains, volcanoes, and lakes", "Brown bears are commonly seen along the shores", "Very remote with no road access"] },
+  { name: "Wrangell–St. Elias", location: "Alaska", facts: ["The largest national park in the U.S. — bigger than some states", "Contains some of the most massive glaciers in North America", "Includes multiple peaks over 16,000 feet"] },
+  { name: "Haleakalā", location: "Hawaii", facts: ["A massive dormant shield volcano", "Watching sunrise from the summit above the clouds is iconic", "Home to several rare and endangered species"] },
+  { name: "Hawai'i Volcanoes", location: "Hawaii", facts: ["Contains some of the world's most active volcanoes", "Lava flows have occasionally reached the ocean", "The park's landmass continues to grow from volcanic activity"] },
+  { name: "American Samoa", location: "American Samoa", facts: ["The only U.S. national park south of the equator", "Protects a lush tropical rainforest", "Home to vibrant coral reef ecosystems"] },
+  { name: "Glacier", location: "Montana", facts: ["Known as the 'Crown of the Continent'", "The famous Going-to-the-Sun Road cuts across the park", "Its glaciers are rapidly melting due to climate change"] },
+  { name: "Grand Teton", location: "Wyoming", facts: ["Features one of the most dramatic mountain ranges in the U.S.", "The peaks rise sharply with no foothills", "Exceptional wildlife viewing including moose and bears"] },
+  { name: "Yellowstone", location: "Wyoming / Montana / Idaho", facts: ["The world's first national park, established in 1872", "Contains more than half of the world's active geysers", "Sits atop one of the world's largest supervolcanoes"] },
+  { name: "Great Basin", location: "Nevada", facts: ["Home to ancient bristlecone pine trees, some thousands of years old", "Lehman Caves offers stunning underground formations", "Some of the darkest night skies in the lower 48"] },
+  { name: "Big Bend", location: "Texas", facts: ["The Rio Grande forms the park's entire southern border", "One of the largest and most remote desert ecosystems in the U.S.", "Has some of the darkest skies of any U.S. national park"] },
+  { name: "Guadalupe Mountains", location: "Texas", facts: ["Contains the highest peak in Texas", "Features ancient fossilized reef formations", "Excellent and uncrowded hiking"] },
+  { name: "Carlsbad Caverns", location: "New Mexico", facts: ["Contains massive underground cave chambers", "Hundreds of thousands of bats pour out at sunset in summer", "Over 100 caves have been discovered in the park"] },
+  { name: "Gateway Arch", location: "Missouri", facts: ["One of the smallest national parks by area", "The iconic 630-foot arch is the tallest man-made monument in the U.S.", "Symbolizes America's westward expansion"] },
+  { name: "Indiana Dunes", location: "Indiana", facts: ["Features sand dunes along the southern shore of Lake Michigan", "Supports surprisingly diverse ecosystems for its size", "A top destination for birdwatching in the Midwest"] },
+  { name: "Isle Royale", location: "Michigan", facts: ["Only accessible by boat or floatplane", "Home to one of the longest-running predator-prey studies of wolves and moose", "One of the least visited parks in the lower 48"] },
+  { name: "Voyageurs", location: "Minnesota", facts: ["A water-based park best explored by canoe or houseboat", "Named after the French-Canadian fur traders who once paddled these waters", "The northern Minnesota skies offer excellent northern lights viewing"] }
+];
+
+let rollCount = 0;
+let lastIndex = -1;
+
+function roll() {
+  let idx;
+  do { idx = Math.floor(Math.random() * parks.length); } while (idx === lastIndex && parks.length > 1);
+  lastIndex = idx;
+  rollCount++;
+  const p = parks[idx];
+  document.getElementById('card').innerHTML = `
+    <div>
+      <span class="badge">Park #${idx + 1} of ${parks.length}</span>
+      <p class="park-name">${p.name}</p>
+      <p class="park-location">${p.location}</p>
+    </div>
+    <div>
+      ${p.facts.map(f => `<p class="fact">${f}</p>`).join('')}
+    </div>
+  `;
+  document.getElementById('counter').textContent = `Roll ${rollCount} — ${parks.length} parks in the pool`;
+}
+</script>
